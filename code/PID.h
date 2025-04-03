@@ -13,7 +13,7 @@
 //#define SPEED_MAX   3000  //电机速度限幅，正
 //#define SPEED_MIN  -3000  //电机速度限幅，负
 
-int my_abs(int value);
+
 typedef struct
 {
         float P;
@@ -26,22 +26,10 @@ typedef struct
 }PID_Datatypedef;
 typedef struct
 {
-        float kP;
-        float kI;
-        float kD;
-
-        float LastError1;
-        float PrevError1;
-
-}PID_Angeltypedef;
-typedef struct
-{
         float KP_1;
         float KD_1;
         float GKD;
-        float KP_2;
         float lasterror;
-        float integrator;   // 积分项初始化为0
 }PID_imu_Datatypedef;
 extern float erspeed;
 extern int Increase1;
@@ -55,7 +43,6 @@ extern float qulv;
 extern float Error;
 extern PID_imu_Datatypedef imu;
 extern PID_Datatypedef sptr1,sptr2;
-extern PID_Angeltypedef angel;
 //extern float P_L;
 //extern float I_L;
 //extern float P_R;

@@ -64,7 +64,7 @@ IFX_INTERRUPT(cc60_pit_ch1_isr, 0, CCU6_0_CH1_ISR_PRIORITY)
     Control_car();
 //    PID_select();
     PID_output();
-    get_gyro();
+    imu660_Read();
 
 //    Motor_Left(1000);
 //    Motor_Right(1000);

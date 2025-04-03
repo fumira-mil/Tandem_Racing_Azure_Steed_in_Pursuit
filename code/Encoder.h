@@ -8,5 +8,4 @@ extern volatile float Speed_Right_Real;
 
 void Encoder_Init();
 void Encoder_Read(void);
-int get_speed_diff(void) ;
 #endif /* CODE_ENCODER_H_ */

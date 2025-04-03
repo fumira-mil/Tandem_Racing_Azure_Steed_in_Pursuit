@@ -23,4 +23,3 @@ void Encoder_Read(void)
 
     //system_delay_ms(100);
 };
-

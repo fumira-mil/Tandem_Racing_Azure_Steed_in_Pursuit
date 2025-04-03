@@ -36,9 +36,7 @@ void GANJIANG_Init(void)
    Motor_Init();
    //初始化WIFI_SPI之前，初始化摄像头
    mt9v03x_init();
-
    imu660ra_init();
-
 #if(1 == WIFI_SPI_OPEN )
    WIFI_SPI_Init();
 #endif
@@ -133,8 +131,8 @@ void WIFI_SPI_Init(void)
     // 发送总钻风图像信息(并且包含三条边界信息，边界信息含有横纵轴坐标)
     // 这样的方式可以实现对于有回弯的边界显示
     seekfree_assistant_interface_init(SEEKFREE_ASSISTANT_WIFI_SPI);
-    seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X, image_copy[0], LCDW, LCDH);
-    seekfree_assistant_camera_boundary_config(X_BOUNDARY, MT9V03X_H,ImageDeal[0].LeftBorder,ImageDeal[0].RightBorder, ImageDeal[0].Center, NULL, NULL, NULL);     // 图像发送时包含三条边线，边线只有横坐标
+    seekfree_assistant_camera_information_config(SEEKFREE_ASSISTANT_MT9V03X, image_copy[0], MT9V03X_W, MT9V03X_H);
+    seekfree_assistant_camera_boundary_config(X_BOUNDARY, MT9V03X_H, l_border, r_border, center_line, NULL, NULL, NULL);     // 图像发送时包含三条边线，边线只有横坐标
 
 #endif
 }

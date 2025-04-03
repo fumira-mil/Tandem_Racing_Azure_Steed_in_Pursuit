@@ -6,8 +6,8 @@
  */
 #include "PID.h"
 
-int setspeed1=1200;
-int setspeed2=1200;
+int setspeed1=1500;
+int setspeed2=1500;
 int speed1;//左电机
 int speed2;
 int Increase1=0;
@@ -15,28 +15,14 @@ int Increase2=0;
 float divertion;
 float erspeed=0;
 
-float gyro_filtered = 0; // 滤波后的陀螺仪值
+
 
 PID_Datatypedef sptr1,sptr2;
 PID_imu_Datatypedef imu;
-PID_Angeltypedef angel;
 //float P_L=0.1;
 //float I_L=0;
 //float P_R=0.1;
 //float I_R=0;
-
-int my_abs(int value)
-{
-if(value>=0) return value;
-else return -value;
-}
-
-int16 limit_a_b(int16 x, int a, int b)
-{
-    if(x<a) x = a;
-    if(x>b) x = b;
-    return x;
-}
 
 void PID_Init(PID_Datatypedef*sptr)
 {
@@ -52,8 +38,6 @@ void imu_PID_Init(PID_imu_Datatypedef*imu)
     imu->KD_1=0;
     imu->GKD=0;
     imu->lasterror=0;
-    imu->KP_2 = 0;
-    imu->integrator = 0;   // 积分项初始化为0
 }
 int MotorPID_Output(PID_Datatypedef*sptr,float NowSpeed,int ExpectSpeed)
 {
@@ -68,46 +52,29 @@ int MotorPID_Output(PID_Datatypedef*sptr,float NowSpeed,int ExpectSpeed)
 float imuPID_Output(float erspeed,PID_imu_Datatypedef*imu)
 {
     float imu_out;
-
-    imu_out = (erspeed * imu->KP_1) + (erspeed * my_abs(erspeed) * imu->KP_2) + (erspeed - imu->lasterror) * imu->KD_1 + imu660ra_gyro_x * imu->GKD;
-    imu->lasterror = erspeed; // 更新上一次误差
-    if (imu_out > 5000) imu_out =5000;
+    imu_out=erspeed*imu->KP_1+(erspeed-imu->lasterror)*imu->KD_1-imu660ra_gyro_x*imu->GKD;
+    imu->lasterror=erspeed;
+    if (imu_out > 5000) imu_out = 5000;
     else if (imu_out < -5000) imu_out = -5000;
     return imu_out;
 
 }
-//int ang_pid(float b,int c)
-//{
-//    int t;
-//    int temp_speed;
-//
-//    temp_speed=(speed1+speed2)/2;
-//
-//    t=angel.kP*(temp_speed-b)+angel.kD*(temp_speed-angel.LastError1);
-//    angel.LastError1=temp_speed-b;
-//
-//    return t;
-//
-//}
 void PID_output(void)
 {
-
+    CurveInfo curve;
 //    static float last_Increase1 = 0;
 //    static float last_Increase2 = 0;
 
-//            增量式PID控制小车直行
+            //增量式PID控制小车直行
     Increase1=MotorPID_Output(&sptr1,speed1,setspeed1);
     Increase2=MotorPID_Output(&sptr2,speed2,setspeed2);
             //方向环直接扭转小车运行方向
-    divertion=imuPID_Output(center_line_error,&imu);
-//    Increase1=-divertion;
-//    Increase2=+divertion;
+    divertion=imuPID_Output(erspeed,&imu);
+
     Increase1=Increase1-divertion;
     Increase2=Increase2+divertion;
     Motor_Left(Increase1);
     Motor_Right(Increase2);
-//    Motor_Left(1000);
-//    Motor_Right(1000);
 //    if(Increase1-Increase2>-6000 && Increase1-Increase2<6000)
 //    {
 //    float diff = Increase1 - Increase2;

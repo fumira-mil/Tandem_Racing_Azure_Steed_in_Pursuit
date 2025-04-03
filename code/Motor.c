@@ -27,37 +27,18 @@ void Motor_Init(void)
         //PID初始化
         //增量式PID
     imu_PID_Init(&imu);
-        //右电机参数
-        sptr1.P=2.5;////对应speed2编码器读数
-        sptr1.I=1.2;
-        sptr1.D=0;
-        //左电机参数
-        sptr2.P=2.5;//对应speed1编码器读数
-        sptr2.I=1.18;
-        sptr2.D=0;
+//    if(flag)
+    sptr1.P=2.5;////对应speed2编码器读数
+    sptr1.I=1.25;
+    sptr1.D=0;
 
-            //imu转向环参数
-        imu.KP_1 = 30;
-        imu.KD_1 = 0;
-     // imu.KP_2 = 0;
-        imu.GKD = -1.5;
+    sptr2.P=2.5;//对应speed1编码器读数
+    sptr2.I=1.2;
+    sptr2.D=0;
 
-
-//    //学长版
-//    //右电机参数
-//    sptr1.P=2.5;////对应speed2编码器读数
-//    sptr1.I=1.2;
-//    sptr1.D=0;
-//    //左电机参数
-//    sptr2.P=2.5;//对应speed1编码器读数
-//    sptr2.I=1.18;
-//    sptr2.D=0;
-//    //imu转向环参数
-//    imu.KP_1 = 20;
-//    imu.KD_1 = 20;
-//    // imu.KP_2 = 0;
-//    imu.GKD = -0.8;
-
+    imu.KP_1=60;
+    imu.KD_1=0;
+    imu.GKD=0;
 }
     //       setspeed1 = 2000;//编码器对应速度2.7m/s
     //       setspeed2 = 2000;
@@ -138,4 +119,3 @@ void wu_shua(void)
 
 
 }
-

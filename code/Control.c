@@ -7,9 +7,9 @@
 #include "Control.h"
 
 #define constrain(value, min_val, max_val) ((value) < (min_val) ? (min_val) : ((value) > (max_val) ? (max_val) : (value)))
-//
-//int Speed_init_L = Constant_Speed;
-//int Speed_init_R = Constant_Speed;
+
+int Speed_init_L = Constant_Speed;
+int Speed_init_R = Constant_Speed;
 int flag=0;
 int flag1=0;
 int flag_t=0;
@@ -64,30 +64,40 @@ double calculate_steering_angle(float dt) {
     return steer_angle;
 }
 
-//Control_wheel_Speed steer_with_angle(double target_angle, double target_speed) {
-//
-////    printf("%d\n",(int)target_angle);
-//    Control_wheel_Speed Speed_wheel;
-//
-//    // 参数检查（防止除零）
-//        const double WHEEL_BASE = 15.0;         // 轴距（单位：cm，需校准）
-//        const double WHEEL_DISTANCE = 20.0;     // 轮距（轮间距，单位：cm，需校准）
-//
-//    // 计算目标角速度
-//    double omega = target_angle / 0.2;  // 假设转向时间为 1 秒
-//
-//    double  K_P = 0.2 ;
-//
-//    // 计算左右轮速度
-//    Speed_wheel.left = target_speed + (WHEEL_DISTANCE / (2 * WHEEL_BASE)) * omega *K_P;
-//    Speed_wheel.right  = target_speed - (WHEEL_DISTANCE / (2 * WHEEL_BASE)) * omega *K_P;
-//
-//    // 设置电机速度
-//    return Speed_wheel;
-//}
+Control_wheel_Speed steer_with_angle(double target_angle, double target_speed) {
+
+//    printf("%d\n",(int)target_angle);
+    Control_wheel_Speed Speed_wheel;
+
+    // 参数检查（防止除零）
+        const double WHEEL_BASE = 15.0;         // 轴距（单位：cm，需校准）
+        const double WHEEL_DISTANCE = 20.0;     // 轮距（轮间距，单位：cm，需校准）
+
+    // 计算目标角速度
+    double omega = target_angle / 0.2;  // 假设转向时间为 1 秒
+
+    double  K_P = 0.2 ;
+
+    // 计算左右轮速度
+    Speed_wheel.left = target_speed + (WHEEL_DISTANCE / (2 * WHEEL_BASE)) * omega *K_P;
+    Speed_wheel.right  = target_speed - (WHEEL_DISTANCE / (2 * WHEEL_BASE)) * omega *K_P;
+
+    // 设置电机速度
+    return Speed_wheel;
+}
 
 
 
+uint8 error_[ERROR_COUNT] = {10, 10, 10, 10, 10, 10, 10, 10,
+                            9 , 9 , 9 , 9 , 9 , 9 , 9 , 9 ,
+                            8 , 8 , 8 , 8 , 8 , 8 , 8 , 8 ,
+                            7 , 7 , 7 , 7 , 7 , 7 , 7 , 7 ,
+                            6 , 6 , 6 , 6 , 6 , 6 , 6 , 6 ,
+                            5 , 5 , 5 , 5 , 5 , 5 , 5 , 5 ,
+                            4 , 4 , 4 , 4 , 4 , 4 , 4 , 4 ,
+                            3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 ,
+                            2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 ,
+                            1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 };
 //uint8 error_[ERROR_COUNT] = {11, 11, 11, 11, 11, 11, 11, 11,
 //                            10 , 10 , 10 , 10 , 10 , 10 , 10 ,10 ,
 //                            9 , 9 , 9 , 9 , 9 , 9 , 9 , 9 ,
@@ -108,18 +118,18 @@ double calculate_steering_angle(float dt) {
 //                            3 , 3 , 3 , 3 , 3 , 3 , 3 , 3 ,
 //                            2 , 2 , 2 , 2 , 2 , 2 , 2 , 2 ,
 //                            1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 };
-//double get_center_error(void)
-//{
-//    int16 center_error[ERROR_COUNT] = {0};
-//    double error = 0.0;
-//    for(uint8 i = 0; i < ERROR_COUNT; i++)
-//    {
-//        center_error[i] = center_line[116 - i] - 94;
-//        error += (float)(center_error[i] * error_[i]);
-//    }
-//    error = error/440.0;
-//    return error;
-//}
+double get_center_error(void)
+{
+    int16 center_error[ERROR_COUNT] = {0};
+    double error = 0.0;
+    for(uint8 i = 0; i < ERROR_COUNT; i++)
+    {
+        center_error[i] = center_line[116 - i] - 94;
+        error += (float)(center_error[i] * error_[i]);
+    }
+    error = error/440.0;
+    return error;
+}
 
 
 /*
@@ -257,13 +267,86 @@ double get_steering_angle(LaneController *controller, uint8_t *center_line) {
 }
 
 void Control_car(void)
-{
+{   CurveInfo curve;
+   RoadType type = recognize_road_type();
    double base_speed = Constant_Speed;
    Control_wheel_Speed speed;
-//   err_road = get_center_error();
+   err_road = get_center_error();
 
+   steer = err_road;
+   erspeed=steer;
+//   if (type == 0) {
+//              setspeed1 = 1700;
+//              setspeed2 = 1700;
+//              sptr1.P=2.5;////对应speed2编码器读数
+//              sptr1.I=1.3;
+//              sptr1.D=0;
+//
+//              sptr2.P=2.5;//对应speed1编码器读数
+//              sptr2.I=1.23;
+//              sptr2.D=0;
+//           imu.KP_1=10;
+//           imu.KD_1=3;
+//           imu.GKD=0.3;
+//   } else if (type == 1 || type == 2) {
+//
+//           setspeed1 = 1500;
+//           setspeed2 = 1500;
+//           sptr1.P=2.5;////对应speed2编码器读数
+//           sptr1.I=1.3;
+//           sptr1.D=0;
+//
+//           sptr2.P=2.5;//对应speed1编码器读数
+//           sptr2.I=1.23;
+//           sptr2.D=0;
+//           imu.KP_1=40;
+//           imu.KD_1=10;
+//           imu.GKD=1;
+//   }
+//   if((steer>=-5&steer<=0)||(steer<=5&&steer>=0))
+//      erspeed=2*steer;//7.3
+//   else if(steer<10&&steer>-10)
+//      erspeed=5*steer;
+//   else if(steer<15&&steer>-15)
+//      erspeed=7*steer;
+//   else if(steer<25&&steer>-25)
+//      erspeed=8*steer;
+//   else if(steer<35&&steer>-35)
+//      erspeed=9*steer;
+//   else if(steer<45&&steer>-45)
+//      erspeed=10*steer;
+//   else
+//      erspeed=10*steer;
+//   if((steer>=-20&steer<=-8)||(steer<=20&&steer>=8))
+//       erspeed=(7.3+0.8*steer)*steer;//7.3
+//   else if(steer<8&&steer>-8)
+//       erspeed=6.1*steer;
+//   else
+//       erspeed=97.3*steer;
 
-   erspeed=center_line_error;
+//   if(type==0)
+//   {
+//       setspeed1=1.2*setspeed1;
+//       setspeed1=1.2*setspeed2;
+//   }
+//   else
+//       setspeed1=0.9*setspeed1;
+//       setspeed1=0.9*setspeed1;
+    // 初始化控制器参数（这些参数需要根据实际情况调试）
+//        LaneController controller;
+//        controller.look_ahead_y = 72;      // 前瞻行设为300行
+//        controller.kp_angle = 1.0;          // 前瞻角度增益
+//        controller.kp_offset = 0.5;         // 底部偏移增益
+//        controller.smoothing_factor = 0.7;  // 平滑因子
+//        controller.last_steer = 0.0;
+//
+//        steer = get_steering_angle(&controller, center_line);
+//        printf("%f",steer);
+
+//        Control_wheel_Speed Speed_wheel = steer_with_angle(err_road, Constant_Speed);
+//
+//        Speed_init_L = (int)(Speed_wheel.left*1250);
+//        Speed_init_R = (int)(Speed_wheel.right*1250);
 
 }
 

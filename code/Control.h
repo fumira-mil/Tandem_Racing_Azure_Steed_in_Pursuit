@@ -39,7 +39,7 @@ extern int flag_t;
 extern int Increase1;
 extern int Increase2;
 extern double steer;
-
+extern float err_road;
 //extern int *Control_Speed_left;
 //extern int *Control_Speed_right;
 
